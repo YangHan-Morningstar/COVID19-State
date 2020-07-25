@@ -10,7 +10,10 @@ import SwiftUI
 
 struct Home: View {
     
-    @State var index: Int = 0
+    @State var index = 0
+    @State var country = "China"
+    @State var noCountry = false
+    
     @ObservedObject var dataViewModel = DataViewModel()
     
     var body: some View {
@@ -26,8 +29,10 @@ struct Home: View {
                             
                             Spacer()
                             
-                            Button(action: {}) {
-                                Text("China")
+                            Button(action: {
+                                self.makeCustomAlert()
+                            }) {
+                                Text(country)
                                     .foregroundColor(.white)
                                     .fontWeight(.bold)
                             }
@@ -39,7 +44,7 @@ struct Home: View {
                                 self.index = 0
                                 self.dataViewModel.mainData = nil
                                 self.dataViewModel.daily.removeAll()
-                                self.dataViewModel.getCountryData()
+                                self.dataViewModel.getCountryData(country: self.country)
                             }) {
                                 Text("My Country")
                                     .foregroundColor(self.index == 0 ? .black : .white)
@@ -187,8 +192,37 @@ struct Home: View {
         }
         .edgesIgnoringSafeArea(.all)
         .onAppear() {
-            self.dataViewModel.getCountryData()
+            self.dataViewModel.getCountryData(country: self.country)
         }
+        .alert(isPresented: $noCountry) {
+            return Alert(title: Text("Error"), message: Text("Invalid City Name"), dismissButton: .destructive(Text("OK")))
+        }
+    }
+    
+    func makeCustomAlert() {
+        let alert = UIAlertController(title: "Country", message: "Input a country", preferredStyle: .alert)
+        
+        alert.addTextField { (_) in
+            
+        }
+        
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in
+            for country in countryList {
+                if country.lowercased() == alert.textFields![0].text!.lowercased() {
+                    self.country = alert.textFields![0].text!
+                    self.dataViewModel.mainData = nil
+                    self.dataViewModel.daily.removeAll()
+                    self.dataViewModel.getCountryData(country: self.country)
+                    return
+                }
+            }
+            
+            self.noCountry.toggle()
+        }))
+        
+        alert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: nil))
+        
+        UIApplication.shared.windows.first?.rootViewController?.present(alert, animated: true, completion: nil)
     }
 }
 

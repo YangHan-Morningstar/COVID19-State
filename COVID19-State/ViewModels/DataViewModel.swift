@@ -27,9 +27,9 @@ class DataViewModel: ObservableObject {
         historySession = URLSession(configuration: .default)
     }
     
-    func getCountryData() {
-        sumURL = "https://corona.lmao.ninja/v2/countries/china?yesterday=false"
-        historyURL = "https://corona.lmao.ninja/v2/historical/china?lastdays=7"
+    func getCountryData(country: String) {
+        sumURL = "https://corona.lmao.ninja/v2/countries/\(country.lowercased())?yesterday=false"
+        historyURL = "https://corona.lmao.ninja/v2/historical/\(country.lowercased())?lastdays=7"
         
         sumDecodeTask()
         historyDecodeTask(index: 0)
@@ -104,8 +104,7 @@ class DataViewModel: ObservableObject {
             let converted = CGFloat(value) / CGFloat(last)
 
             return converted * height
-        }
-        else{
+        } else {
             return 0
         }
     }
