@@ -15,7 +15,7 @@
 
 * 从<https://corona.lmao.ninja>获得。
 
-### 2.4 其他
+### 2.3 其他
 
 * 采用MVVM软件架构模式。
 
